@@ -1,3 +1,39 @@
+function MultipleChoice (choices: any[]) {
+    choice_a = sprites.create(img`
+        . . 2 . . 
+        . 2 . 2 . 
+        2 . . . 2 
+        2 2 2 2 2 
+        2 . . . 2 
+        `, SpriteKind.Player)
+    choice_a.setPosition(78, 58)
+    game.showLongText(choices[0], DialogLayout.Bottom)
+    choice_a.destroy()
+    choice_b = sprites.create(img`
+        3 3 3 . . 
+        3 . . 3 . 
+        3 3 3 . . 
+        3 . . 3 . 
+        3 3 3 . . 
+        `, SpriteKind.Player)
+    choice_b.setPosition(78, 58)
+    game.showLongText(choices[1], DialogLayout.Bottom)
+    choice_b.destroy()
+    choice_c = sprites.create(img`
+        . 5 5 5 . 
+        5 . . . 5 
+        5 . . . . 
+        5 . . . 5 
+        . 5 5 5 . 
+        `, SpriteKind.Player)
+    choice_c.setPosition(78, 58)
+    game.showLongText(choices[2], DialogLayout.Bottom)
+    choice_c.destroy()
+    choice = game.askForString("Make a choice")
+    while (!(choice == "A" || (choice == "B" || choice == "C"))) {
+        choice = game.askForString("Make a choice")
+    }
+}
 function GameOver (text: string) {
     sprites.destroyAllSpritesOfKind(SpriteKind.Player)
     scene.setBackgroundImage(img`
@@ -125,6 +161,10 @@ function GameOver (text: string) {
     game.showLongText(text, DialogLayout.Bottom)
     game.over(false, effects.melt)
 }
+let choice_c: Sprite = null
+let choice_b: Sprite = null
+let choice_a: Sprite = null
+let choice = ""
 let mySprite: Sprite = null
 scene.setBackgroundImage(img`
     3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333
@@ -486,7 +526,7 @@ if (game.ask("Drink the Tea", "walk 10 miles")) {
     } else {
         game.showLongText("dinosore got thrsty and died you continue your road", DialogLayout.Bottom)
         sprites.destroyAllSpritesOfKind(SpriteKind.Player)
-        pause(1000)
+        pause(500)
         scene.setBackgroundImage(img`
             ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
             ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
@@ -609,7 +649,7 @@ if (game.ask("Drink the Tea", "walk 10 miles")) {
             ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
             ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
             `)
-        pause(2000)
+        pause(1000)
     }
 }
 scene.setBackgroundImage(img`
@@ -744,9 +784,14 @@ if (game.ask("eat trash", "look for food stands")) {
 game.showLongText("You found hotdog stand", DialogLayout.Bottom)
 game.showLongText("hotdog costs 2$", DialogLayout.Bottom)
 game.showLongText("what you should do?", DialogLayout.Bottom)
-if (game.ask("try to steal some hotdogs", "buy it")) {
-    GameOver("the owner noticed you and snaped your neck")
-} else {
-    game.showLongText("you bought hotdog and ate it", DialogLayout.Bottom)
+MultipleChoice(["Steal it", "Buy it", "Try to get it free"])
+if (choice == "A") {
+    GameOver("Owner snaped your neck")
+    game.over(false, effects.melt)
+} else if (choice == "B") {
+    game.showLongText("You ate hot dog and survived", DialogLayout.Bottom)
     game.over(true, effects.confetti)
+} else {
+    GameOver("he refused and you starved to death")
+    game.over(false, effects.slash)
 }
